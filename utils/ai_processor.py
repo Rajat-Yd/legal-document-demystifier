@@ -2,14 +2,14 @@ import os
 import json
 import logging
 from typing import Dict, List, Any, Optional
-from openai import OpenAI
+from google import genai
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
-# the newest OpenAI model is "gpt-5" which was released August 7, 2025.
-# do not change this unless explicitly requested by the user
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-openai = OpenAI(api_key=OPENAI_API_KEY)
+# Using Gemini 2.5 Flash for AI processing
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 def simplify_legal_text(document_text: str) -> Dict[str, Any]:
     """
