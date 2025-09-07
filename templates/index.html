@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Document Demystifier</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-balance-scale text-primary me-3"></i>
+                        Legal Document Demystifier
+                    </h1>
+                    <p class="lead text-muted">
+                        Transform complex legal documents into plain language with AI-powered analysis
+                    </p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' }} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Upload Form -->
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-upload me-2"></i>
+                            Upload Your Legal Document
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+                            <!-- File Upload -->
+                            <div class="mb-4">
+                                <label for="file" class="form-label fw-bold">
+                                    <i class="fas fa-file-pdf me-2"></i>
+                                    Select Document
+                                </label>
+                                <input type="file" class="form-control form-control-lg" id="file" name="file" 
+                                       accept=".pdf,.txt" required>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Supported formats: PDF, TXT (Max size: 16MB)
+                                </div>
+                            </div>
+
+                            <!-- Action Selection -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold mb-3">
+                                    <i class="fas fa-tasks me-2"></i>
+                                    Choose Action
+                                </label>
+                                <div class="row g-3">
+                                    <!-- Simplify Option -->
+                                    <div class="col-md-4">
+                                        <div class="card h-100 action-card" data-action="simplify">
+                                            <div class="card-body text-center">
+                                                <div class="action-icon mb-3">
+                                                    <i class="fas fa-language fa-2x text-success"></i>
+                                                </div>
+                                                <h5 class="card-title">Simplify</h5>
+                                                <p class="card-text small">
+                                                    Convert complex legal language into plain, understandable text
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" 
+                                                           id="simplify" value="simplify" required>
+                                                    <label class="form-check-label fw-bold" for="simplify">
+                                                        Select
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Summarize Option -->
+                                    <div class="col-md-4">
+                                        <div class="card h-100 action-card" data-action="summarize">
+                                            <div class="card-body text-center">
+                                                <div class="action-icon mb-3">
+                                                    <i class="fas fa-compress-alt fa-2x text-info"></i>
+                                                </div>
+                                                <h5 class="card-title">Summarize</h5>
+                                                <p class="card-text small">
+                                                    Get a concise executive summary with key points and risks
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" 
+                                                           id="summarize" value="summarize" required>
+                                                    <label class="form-check-label fw-bold" for="summarize">
+                                                        Select
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Q&A Option -->
+                                    <div class="col-md-4">
+                                        <div class="card h-100 action-card" data-action="question">
+                                            <div class="card-body text-center">
+                                                <div class="action-icon mb-3">
+                                                    <i class="fas fa-question-circle fa-2x text-warning"></i>
+                                                </div>
+                                                <h5 class="card-title">Ask Questions</h5>
+                                                <p class="card-text small">
+                                                    Get specific answers about clauses, obligations, and risks
+                                                </p>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="action" 
+                                                           id="question" value="question" required>
+                                                    <label class="form-check-label fw-bold" for="question">
+                                                        Select
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Question Input (hidden by default) -->
+                            <div class="mb-4" id="questionInput" style="display: none;">
+                                <label for="question" class="form-label fw-bold">
+                                    <i class="fas fa-question me-2"></i>
+                                    Your Question
+                                </label>
+                                <textarea class="form-control" id="question" name="question" rows="3" 
+                                          placeholder="Example: What are my obligations under this contract? What risks should I be aware of?"></textarea>
+                                <div class="form-text">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Ask about specific clauses, risks, obligations, or get clarifications on complex terms
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                    <i class="fas fa-magic me-2"></i>
+                                    <span id="submitText">Process Document</span>
+                                    <span class="spinner-border spinner-border-sm ms-2 d-none" id="loadingSpinner"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h3 class="text-center mb-4">
+                            <i class="fas fa-star me-2"></i>
+                            Key Features
+                        </h3>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-shield-alt fa-3x text-danger mb-3"></i>
+                            <h5>Risk Detection</h5>
+                            <p class="small text-muted">Automatically identifies potential risks and red flags</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-eye fa-3x text-warning mb-3"></i>
+                            <h5>Hidden Clauses</h5>
+                            <p class="small text-muted">Highlights important clauses that are easy to miss</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                            <h5>Plain Language</h5>
+                            <p class="small text-muted">Converts legalese into human-friendly explanations</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-bolt fa-3x text-success mb-3"></i>
+                            <h5>Instant Analysis</h5>
+                            <p class="small text-muted">Get immediate insights and summaries</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+/* Custom styles for Legal Document Demystifier */
+
+.action-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.action-card.selected {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.action-icon {
+    transition: transform 0.3s ease;
+}
+
+.action-card:hover .action-icon {
+    transform: scale(1.1);
+}
+
+.result-section {
+    animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading state styles */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Custom scrollbar for result sections */
+.result-section .bg-dark {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.result-section .bg-dark::-webkit-scrollbar {
+    width: 8px;
+}
+
+.result-section .bg-dark::-webkit-scrollbar-track {
+    background: var(--bs-dark);
+    border-radius: 4px;
+}
+
+.result-section .bg-dark::-webkit-scrollbar-thumb {
+    background: var(--bs-secondary);
+    border-radius: 4px;
+}
+
+.result-section .bg-dark::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-primary);
+}
+
+/* Print styles */
+@media print {
+    .btn, .card-header, nav {
+        display: none !important;
+    }
+    
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .action-card {
+        margin-bottom: 1rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .col-md-4 .card {
+        min-height: auto;
+    }
+}
+
+/* File input custom styling */
+.form-control[type="file"]:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Alert animations */
+.alert {
+    animation: slideInDown 0.5s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
