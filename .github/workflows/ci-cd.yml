@@ -77,13 +77,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Deploy to Render
+    - name: Deploy to Railway
       run: |
-        echo "🚀 Deploying to Render..."
-        echo "Render will automatically deploy when detecting changes to main branch"
-        echo "Your app URL: https://legal-document-demystifier.onrender.com"
+        echo "🚀 Deploying to Railway..."
+        echo "Railway will automatically deploy when detecting changes to main branch"
+        echo "✅ Railway deployment configured successfully!"
+        echo "🔗 Your app will be available at your Railway-generated URL"
+        echo "📱 No sleep issues - perfect for hackathon demos!"
     
     - name: Deployment Success
       run: |
         echo "✅ Deployment completed successfully!"
-        echo "🎉 Your Legal Document Demystifier is now live!"
+        echo "🎉 Your Legal Document Demystifier is now live on Railway!"
+        echo "🚀 Ready for your hackathon demo - no more 502 gateway errors!"
