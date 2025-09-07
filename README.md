@@ -1,15 +1,3 @@
----
-title: Legal Document Demystifier
-emoji: ⚖️
-colorFrom: blue
-colorTo: purple
-sdk: gradio
-sdk_version: 4.0.0
-app_file: app_hf.py
-pinned: false
-license: mit
----
-
 # Legal Document Demystifier
 
 A GenAI-powered web application that transforms complex legal documents into plain, understandable language. Built for the "Demystifying Legal Documents" hackathon challenge.
@@ -30,10 +18,11 @@ A GenAI-powered web application that transforms complex legal documents into pla
 
 ## Technology Stack
 
-- Flask web framework
-- Google Gemini AI for document analysis
-- Bootstrap for responsive UI
-- PyPDF2 for document processing
+- **Flask** - Python web framework
+- **Google Gemini AI** - Advanced document analysis
+- **Bootstrap 5** - Responsive dark theme UI
+- **PyPDF2** - PDF text extraction
+- **Gunicorn** - Production WSGI server
 
 Built with ❤️ for making legal documents accessible to everyone.
 
@@ -54,6 +43,8 @@ cd legal-document-demystifier
 2. **Install dependencies**
 ```bash
 pip install flask gunicorn google-genai pypdf2 werkzeug
+# OR using the project's package manager
+uv sync
 ```
 
 3. **Set up environment variables**
@@ -64,14 +55,11 @@ cp .env.example .env
 
 4. **Run the application**
 ```bash
-# For Flask version
+# Development server
 python app.py
 
-# For Gradio version (Hugging Face Spaces)
-python app_hf.py
-
-# For production with Gunicorn
-gunicorn --bind 0.0.0.0:5000 main:app
+# Production server with Gunicorn
+gunicorn --bind 0.0.0.0:5000 --reload main:app
 ```
 
 ### Environment Variables
@@ -81,15 +69,20 @@ gunicorn --bind 0.0.0.0:5000 main:app
 ## 📁 Project Structure
 ```
 legal-document-demystifier/
-├── app.py                 # Flask web application
-├── app_hf.py             # Gradio version for HF Spaces
-├── main.py               # WSGI entry point
+├── app.py                 # Main Flask web application
+├── main.py               # WSGI entry point for deployment
 ├── utils/
 │   ├── document_processor.py  # PDF/TXT text extraction
 │   └── ai_processor.py        # Gemini AI integration
-├── templates/            # HTML templates
-├── static/              # CSS, JS, assets
-└── .env.example         # Environment variables template
+├── templates/
+│   ├── index.html        # Upload and action selection page
+│   └── results.html      # Analysis results display
+├── static/
+│   ├── style.css         # Custom styles and animations
+│   └── script.js         # Frontend interactions
+├── .env.example          # Environment variables template
+├── .gitignore           # Git ignore rules
+└── pyproject.toml       # Project dependencies
 ```
 
 ## 🔒 Security Note
