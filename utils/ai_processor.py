@@ -22,7 +22,7 @@ def simplify_legal_text(document_text: str) -> Dict[str, Any]:
         Dict containing simplified text, risks, obligations, and key points
     """
     try:
-        prompt = f"""
+        system_prompt = """
         You are a legal expert specializing in translating complex legal documents into plain, understandable language.
         
         Please analyze the following legal document and provide:
@@ -31,32 +31,29 @@ def simplify_legal_text(document_text: str) -> Dict[str, Any]:
         3. List important obligations and responsibilities
         4. Highlight key points that need attention
         
-        Document to analyze:
-        {document_text}
-        
         Please respond in JSON format with these fields:
-        {{
+        {
             "simplified_text": "Plain language explanation of the document",
             "risks": ["List of identified risks and red flags"],
             "obligations": ["List of obligations and responsibilities"],
             "key_points": ["List of important points to note"]
-        }}
+        }
         """
         
-        response = openai.chat.completions.create(
-            model="gpt-5",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a legal expert who specializes in making complex legal documents understandable to everyday people. Always respond in JSON format."
-                },
-                {"role": "user", "content": prompt}
+        user_prompt = f"Document to analyze:\n{document_text}"
+        
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                types.Content(role="user", parts=[types.Part(text=user_prompt)])
             ],
-            response_format={"type": "json_object"},
-            max_tokens=3000
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                response_mime_type="application/json"
+            )
         )
         
-        result = json.loads(response.choices[0].message.content or '{}')
+        result = json.loads(response.text or '{}')
         
         # Format the simplified text with proper HTML formatting
         if result.get('simplified_text'):
@@ -85,7 +82,7 @@ def summarize_document(document_text: str) -> Dict[str, Any]:
         Dict containing summary, risks, obligations, and key points
     """
     try:
-        prompt = f"""
+        system_prompt = """
         You are a legal analyst creating executive summaries for business leaders.
         
         Please analyze the following legal document and provide:
@@ -96,32 +93,29 @@ def summarize_document(document_text: str) -> Dict[str, Any]:
         
         Focus on what a business executive needs to know to make informed decisions.
         
-        Document to analyze:
-        {document_text}
-        
         Please respond in JSON format with these fields:
-        {{
+        {
             "summary": "Executive summary of the document",
             "risks": ["List of critical risks"],
             "obligations": ["List of key obligations and deadlines"],
             "key_points": ["List of important clauses and terms"]
-        }}
+        }
         """
         
-        response = openai.chat.completions.create(
-            model="gpt-5",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a senior legal analyst who creates executive summaries for C-level executives. Focus on business impact and decision-making insights. Always respond in JSON format."
-                },
-                {"role": "user", "content": prompt}
+        user_prompt = f"Document to analyze:\n{document_text}"
+        
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                types.Content(role="user", parts=[types.Part(text=user_prompt)])
             ],
-            response_format={"type": "json_object"},
-            max_tokens=2500
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                response_mime_type="application/json"
+            )
         )
         
-        result = json.loads(response.choices[0].message.content or '{}')
+        result = json.loads(response.text or '{}')
         
         # Format the summary with proper HTML formatting
         if result.get('summary'):
@@ -151,13 +145,8 @@ def answer_question(document_text: str, question: str) -> Dict[str, Any]:
         Dict containing the answer and related information
     """
     try:
-        prompt = f"""
+        system_prompt = """
         You are a legal expert answering questions about a specific legal document.
-        
-        Document:
-        {document_text}
-        
-        Question: {question}
         
         Please provide a comprehensive answer that:
         1. Directly addresses the question
@@ -167,28 +156,28 @@ def answer_question(document_text: str, question: str) -> Dict[str, Any]:
         5. Suggests next steps if applicable
         
         Please respond in JSON format with these fields:
-        {{
+        {
             "answer": "Comprehensive answer to the question",
             "relevant_clauses": ["List of relevant document sections or clauses"],
             "risks": ["Any risks related to this question"],
             "recommendations": ["Suggested actions or considerations"]
-        }}
+        }
         """
         
-        response = openai.chat.completions.create(
-            model="gpt-5",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a senior legal counsel providing detailed answers about legal documents. Be thorough, accurate, and practical in your responses. Always respond in JSON format."
-                },
-                {"role": "user", "content": prompt}
+        user_prompt = f"Document:\n{document_text}\n\nQuestion: {question}"
+        
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                types.Content(role="user", parts=[types.Part(text=user_prompt)])
             ],
-            response_format={"type": "json_object"},
-            max_tokens=2000
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                response_mime_type="application/json"
+            )
         )
         
-        result = json.loads(response.choices[0].message.content or '{}')
+        result = json.loads(response.text or '{}')
         
         # Format the answer with proper HTML formatting
         if result.get('answer'):
@@ -245,20 +234,19 @@ def format_text_with_paragraphs(text: str) -> str:
     
     return ''.join(formatted_paragraphs)
 
-def validate_openai_connection() -> bool:
+def validate_gemini_connection() -> bool:
     """
-    Validate that OpenAI API is accessible and working.
+    Validate that Gemini API is accessible and working.
     
     Returns:
         bool: True if connection is successful
     """
     try:
-        response = openai.chat.completions.create(
-            model="gpt-5",
-            messages=[{"role": "user", "content": "Test connection"}],
-            max_tokens=10
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents="Test connection"
         )
         return True
     except Exception as e:
-        logger.error(f"OpenAI connection failed: {str(e)}")
+        logger.error(f"Gemini connection failed: {str(e)}")
         return False
