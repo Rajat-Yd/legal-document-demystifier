@@ -1,6 +1,6 @@
 # Legal Document Demystifier
 
-A GenAI-powered web application that transforms complex legal documents into plain, understandable language. Built for the "Demystifying Legal Documents" hackathon challenge.
+A <p href = "https://document-demystifyer.up.railway.app/">GenAI-powered web application</p> that transforms complex legal documents into plain, understandable language. Built for the "Demystifying Legal Documents" hackathon challenge.
 
 ## Features
 
